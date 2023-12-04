@@ -32,12 +32,12 @@ user_name = 'hnu202311020126'
 password = 'hzy123456'
 safari = Chrome()
 safari.get(url)
-time.sleep(5) #等待页面加载
+safari.implicitly_wait(10)
 #模拟登录
 safari.find_element(By.ID, 'login').send_keys(user_name)
 safari.find_element(By.ID, 'password').send_keys(password)
 safari.find_element(By.ID, 'password').send_keys(Keys.ENTER)
-time.sleep(4)
+time.sleep(2)
 #获取cookie，User-Agent
 Cookie = safari.get_cookies()
 User_Agent = safari.execute_script('return navigator.userAgent')
@@ -73,10 +73,11 @@ total = {}
 i=1
 try:
     while i <= task_num:
+        safari.implicitly_wait(10)
         safari.find_element(By.XPATH, '//*[@id="task-left-panel"]/div[1]/a[1]').click()
-        time.sleep(2)
+        safari.implicitly_wait(10)
         safari.find_element(By.XPATH,f'/html/body/div[1]/div/div/div/div[2]/section[1]/div[3]/div[3]/div/div/div/div/div[{i}]/div[1]/a').click()
-        time.sleep(4)
+        time.sleep(3)
         #获取课程id -> 根据url中?前面的，最后一个/后面的那部分参数构造请求，同时，似乎还需要用到cookie，User-Agent和Referer参数，这些统一用selenium在登陆后获取并组装成headers
         #获取cookie，User-Agent和Referer
         cur_url=Referer = safari.current_url
@@ -101,8 +102,7 @@ try:
         require = obj2.findall(page_source)
         #获取编辑器中的代码,由于代码都是class = "view-line"的div,先找到所有class = "view-line"的div，获取其中的所有文本，再把不同行的代码用\n连接起来
         code = safari.find_elements(By.CLASS_NAME,'view-line')
-        code = '\n'.join([i.text for i in code])
-
+        code = '\n'.join([i.text for i in code]).lstrip('\n')
         #把参数存入字典，再转换为json格式
         task = {
             'describe':describe[0] if len(describe) != 0 else '',
@@ -117,6 +117,5 @@ try:
 except BaseException:
     print('获取参数失败')
 #把参数写入本地json文件中，文件名字与实shixun_name相同键为course_id，值为一个列表，列表中每个元素为一个字典，字典中包含每一关的参数
-#这些数据都是将要上传到云端的，为防止每次运行程序都覆盖了，需要改写写入文件的逻辑
 with open(f'{shixun_id}.json','w',encoding='utf-8') as f:
     json.dump(total,f,ensure_ascii=False,indent=4)
