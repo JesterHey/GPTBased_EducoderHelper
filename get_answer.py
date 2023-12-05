@@ -18,6 +18,8 @@ file = os.getcwd()
 '''
 后续准备与云服务器连接，先判断当前json是否已在云服务器上，如果在，则直接调用，
 节省调用API的时间和资费，否则，调用API，获得答案，并将答案存入云服务器
+
+12.4晚更新：
 阿里云服务器申请成功！
 '''
 json_name = get_json(file)[0]
@@ -78,6 +80,7 @@ def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
 
 
     # 运行主函数
+    #issue:由于异步获得的答案顺序不确定，需要处理
     return asyncio.run(main(data=data))
 new_data = get_answer_from_api(jsonfile=data,client=client,promot=promot)
 print(new_data)
