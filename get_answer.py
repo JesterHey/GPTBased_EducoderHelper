@@ -45,14 +45,15 @@ promot = '现在，我想让你扮演一个Python程序员来解一个问题，�
 
 # 初始化异步客户端
 client = AsyncOpenAI(
-    api_key='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'
+    api_key='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'
 )
 def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
     data = jsonfile
     client = client
     promot = promot
     # 异步函数来获取答案
-    async def get_answer(value):
+    async def get_answer(key,value):
+        cid = key
         des, req, code = value['describe'], value['require'], value['code']
         question = f'问题描述：{des}\n任务需求：{req}\n根据上面的需求，你需要补充并完善代码：\n{code}'
         try:
@@ -63,24 +64,25 @@ def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
                     {'role': 'user', 'content': question}
                 ]
             )
-            return response.choices[0].message.content
+            return f'{cid}/{response.choices[0].message.content}'
         except Exception as e:
             print(f'错误信息：{e}')
 
     # 主函数
     async def main(data) -> dict:
-        tasks = [get_answer(value) for value in list(data.values())[:1:]]
-        answers = await asyncio.gather(*tasks)
-
+        ansewer_data = data
+        tasks = [get_answer(cid,value) for cid,value in data.items()]
+        answers = await asyncio.gather(*tasks) # 返回一个列表，列表中的每个元素为每个异步任务的返回值
+        #由于异步获得的答案顺序不确定，需要处理,先把答案按照关卡id排序
+        answers.sort(key=lambda x:int(x.split('/')[0]))
         # 在data的每个value中新增一个键值对，键为answer，值为答案，并作为返回值返回
-        for i,val in enumerate(data.values()):
-            val['answer'] = answers[i]
+        for i in range(len(answers)):
+            ansewer_data[list(ansewer_data.keys())[i]]['answer'] = answers[i]
 
-        return data
+        return ansewer_data
 
 
     # 运行主函数
-    #issue:由于异步获得的答案顺序不确定，需要处理
     return asyncio.run(main(data=data))
 new_data = get_answer_from_api(jsonfile=data,client=client,promot=promot)
 print(new_data)
