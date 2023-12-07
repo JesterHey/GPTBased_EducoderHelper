@@ -2,7 +2,9 @@ import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QDesktopWidget
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QTimer, Qt
-
+import platform
+from solve_path import b2txt_path
+platf = platform.platform()
 class ImageWindow(QWidget):
     def __init__(self, image_path):
         super().__init__()
@@ -38,9 +40,9 @@ class ImageWindow(QWidget):
 
 def show_image():
     app = QApplication(sys.argv)
-    ex = ImageWindow('/Users/xuxiaolan/PycharmProjects/GPTPowered_EducoderHelper/picture/b2txt.png')  # 图片路径
+    if 'Windows' in platf:
+        b2txt_path.replace('\b','\\b')
+    ex = ImageWindow(b2txt_path)  # 图片路径
     ex.show()
-    sys.exit(app.exec_())
+    app.exec_()  # 这里不需要exec_()，因为我们只是想显示图片，而不是整个应用程序
 
-
-show_image()

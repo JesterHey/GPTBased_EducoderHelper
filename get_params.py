@@ -29,9 +29,9 @@ opt.add_experimental_option('detach', True)
 #opt.add_argument('--headless')
 chrome_driver = 'D:\ChromeDownload\chromedriver-win64\chromedriver-win64'
 # 发行版时改为调用userinfo.json文件中的用户名和密码
-url = 'https://www.educoder.net/tasks/27V4D95N/1191515/vmxpzae734bj?coursesId=27V4D95N'
-user_name = 'hnu202311020126'
-password = 'hzy123456'
+# url = 'https://www.educoder.net/tasks/27V4D95N/1191515/vmxpzae734bj?coursesId=27V4D95N'
+# user_name = 'hnu202311020126'
+# password = 'hzy123456'
 platf = platform.platform()
 def is_practice(url:str) -> bool:
     obj=re.compile(r'www.educoder.net/tasks')
@@ -84,9 +84,9 @@ def get_parameters(url:str,user_name:str,password:str):
         response = requests.get(url=id_url, headers=headers)
         shixun_id = dict(response.json())['challenge']['shixun_id']
         #判断云端文件是否存在
-        try:
-            exist = is_exist(f'{shixun_id}.json')
-            if exist: #存在，则跳转到云端下载并终止本程序
+        exist = is_exist(f'{shixun_id}.json')
+        if exist:
+            try:
                 print('云端文件已存在，正在下载')
                 download(f'{shixun_id}.json')
                 # 检测本地文件是否下载完成
@@ -99,9 +99,9 @@ def get_parameters(url:str,user_name:str,password:str):
                         break
                     except Exception as e:
                         print(e)
-        except Exception as e:
-            print(e)
-        finally: #不存在，则继续执行本程序
+            except Exception as e:
+                print(e)
+        else:#不存在，则继续执行本程序
             print('云端文件不存在，正在爬取')
             #获取关卡数
             #点击展开关卡页面
@@ -190,5 +190,8 @@ def get_parameters(url:str,user_name:str,password:str):
     else:
         print('这不是一个实训作业')
         exit()
-
-get_parameters(url,user_name,password)
+if __name__ == '__main__':
+    url = 'https://www.educoder.net/tasks/27V4D95N/1191515/vmxpzae734bj?coursesId=27V4D95N'
+    user_name = 'hnu202311020126'
+    password = 'hzy123456'
+    get_parameters(url,user_name,password)

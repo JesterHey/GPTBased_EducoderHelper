@@ -1,7 +1,11 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QDesktopWidget, QScrollBar
-from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QDesktopWidget
+from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QFont
+import platform
+import os
+from PyQt5.QtGui import QTextCursor
+platf = platform.platform()
 
 class TypewriterEffectApp(QWidget):
     def __init__(self, filepaths):
@@ -37,48 +41,60 @@ class TypewriterEffectApp(QWidget):
     def startTyping(self):
         self.content = ""
         for filepath in self.filepaths:
-            with open(filepath, 'r') as file:
-                self.content += file.read() + "\n" + "-"*50 + "\n"
+            with open(filepath, 'r', encoding='utf-8') as file:
+                file_content = file.read()
+                # 处理转义字符
+                file_content = file_content.replace('\\t', '\t').replace('\\n', '\n')
+                self.content += file_content + "\n" + "-" * 50 + "\n"
 
         self.index = 0
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.displayNextCharacter)
-        self.timer.start(5)
+        self.timer.start(20)
 
     def displayNextCharacter(self):
         if self.index < len(self.content):
             char = self.content[self.index]
-            #如果char和下一个字符是\n，那么就要执行换行
-            if char == '\n' and self.content[self.index+1] == '\n':
-                text_to_display = self.textEdit.toPlainText() + '\n\n'
-                self.index += 1
-            elif char == '\\t':
-                # 对制表符进行处理
-                text_to_display = self.textEdit.toPlainText() + '\t'
-            else:
-                # 普通字符
-                text_to_display = self.textEdit.toPlainText() + char
+            text_to_display = self.textEdit.toPlainText() + char
 
-            # 添加光标（移除啦，加了总是有神奇bug）
-            #text_to_display += '|' if self.cursorVisible else ''
-            self.textEdit.setPlainText(text_to_display)
+            # 设置光标
+            cursor = self.textEdit.textCursor()
+            cursor.movePosition(QTextCursor.End)
+            cursor.insertText(char)
+
+            # 交替修改光标显示状态
+            cursor.clearSelection()
+            cursor.setPosition(cursor.position() - 1)
+            cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor)
+            cursor.setCharFormat(cursor.charFormat())
+
+            self.textEdit.setTextCursor(cursor)
+
             self.index += 1
             self.textEdit.ensureCursorVisible()  # 始终滚动到底部
         else:
             self.timer.stop()
-            #self.cursorTimer.stop()  # 停止光标闪烁
 
-
-    def onScrollBarValueChanged(self, value):
+    def onScrollBarValueChanged(self, value):  # 滚动条滚动时，停止自动滚动
         scroll_bar = self.textEdit.verticalScrollBar()
         self.userIsScrolling = value < scroll_bar.maximum()
 
-def main():
+
+def print_txt(json_path: list): # 传入json文件路径
     app = QApplication(sys.argv)
-    filepaths = ['18503 copy.json']  # 替换为您的文件路径
+    filepaths = json_path  
     ex = TypewriterEffectApp(filepaths)
     ex.show()
-    sys.exit(app.exec_())
+    app.exec_()
 
-if __name__ == '__main__':
-    main()
+
+def get_all_txt_file(path):
+    file_list = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith('.txt') and file[0].isdigit():
+                file_list.append(os.path.join(root, file))
+    return file_list
+
+
+print_txt(get_all_txt_file(os.getcwd()))

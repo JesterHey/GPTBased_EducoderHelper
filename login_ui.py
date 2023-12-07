@@ -5,10 +5,11 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt,QTimer
 from PyQt5.QtGui import QPixmap, QPainter
-import os
 import platform
+from solve_path import b2_path, b2txt_path
 import json
-
+from show_welcome import show_image
+platf = platform.platform()
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -16,7 +17,9 @@ class MyApp(QWidget):
 
     def initUI(self):
         # 加载背景图片
-        self.background = QPixmap('/Users/xuxiaolan/PycharmProjects/GPTPowered_EducoderHelper/picture/b2.png')
+        if 'Windows' in platf:
+            b2_path.replace('\b','\\b')
+        self.background = QPixmap(b2_path)
         # 创建一个垂直布局
         mainLayout = QVBoxLayout()
 
@@ -113,7 +116,7 @@ class MyApp(QWidget):
         pwd = self.pwdEdit.text()
         url = self.urlEdit.text()
         
-        if name == '' or pwd == '' or url == '' or ~url.startswith('https') or ~url.startswith('www'):
+        if name == '' or pwd == '' or url == '':
             self.showError("非法输入！")
         else:
             with open('userinfo.json', 'w') as f:
@@ -130,14 +133,11 @@ class MyApp(QWidget):
         # 关闭窗口
 
 
-
-# 判断当前操作系统(基础太渣，只能这样判断了,哈哈)
-platf = platform.platform()
-if platf.startswith('Windows'):
-    os.system('python show_welcome.py')
-else:
-    os.system('python3 show_welcome.py')
-app = QApplication(sys.argv)  # 创建应用程序对象
-ex = MyApp() # 创建窗口对象 
-ex.show() # 显示窗口
-sys.exit(app.exec_()) # 保证程序完整退出
+def show_login():
+    app = QApplication(sys.argv)
+    ex = MyApp()
+    ex.show()
+    app.exec_()
+if __name__ == '__main__':
+    show_image()
+    show_login()

@@ -8,6 +8,9 @@ from openai import AsyncOpenAI
 import os
 import json
 import asyncio
+from cloud import download,delete
+
+download('apis.json')
 #读取当前目录下的json文件
 #获得指定目录下的所有json文件的文件名
 def get_json(file):
@@ -26,6 +29,12 @@ json_name = get_json(file)[0]
 #读取json文件并转换为字典
 with open(json_name,'r',encoding='utf-8') as f:
     data = json.load(f)
+with open('apis.json','r',encoding='utf-8') as f:
+    apis = json.load(f)
+#获得api_key
+api_key = apis['openaiapi']
+#删除本地的apis.json文件
+os.remove('apis.json')
 #遍历字典，获得每一关的参数，构造请求，获得答案
 '''
 用于构造请求的参数：describe,require,code
@@ -43,7 +52,7 @@ promot = '现在，我想让你扮演一个Python程序员来解一个问题，�
 
 # 初始化异步客户端
 client = AsyncOpenAI(
-    api_key='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',
+    api_key=api_key,
     base_url='https://api.op-enai.com/v1'
 )
 def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
@@ -83,9 +92,10 @@ def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
 
     # 运行主函数
     return asyncio.run(main(data=data))
-new_data = get_answer_from_api(jsonfile=data,client=client,promot=promot)
-print(new_data)
-#重写本地json文件
-with open(json_name,'w',encoding='utf-8') as f:
-    json.dump(new_data,f,ensure_ascii=False,indent=4)
+if __name__ == '__main__':
+    new_data = get_answer_from_api(jsonfile=data,client=client,promot=promot)
+    print(new_data)
+    #重写本地json文件
+    with open(json_name,'w',encoding='utf-8') as f:
+        json.dump(new_data,f,ensure_ascii=False,indent=4)
 
