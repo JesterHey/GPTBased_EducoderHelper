@@ -33,3 +33,5 @@ def upload(name):
 
 def delete(name):
     bucket.delete_object(name)
+
+delete('18503.json')

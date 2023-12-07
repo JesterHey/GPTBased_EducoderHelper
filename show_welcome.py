@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QDesktopWidget
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QTimer, Qt
 
@@ -15,25 +15,32 @@ class ImageWindow(QWidget):
         label = QLabel(self)
         pixmap = QPixmap(image_path)
 
-        # 缩放图片到期望的大小
-        scaled_pixmap = pixmap.scaled(700, 400, Qt.KeepAspectRatio)  # 设置图片大小为400x300，并保持纵横比
+        # 获取屏幕尺寸
+        screen = QDesktopWidget().screenGeometry()
+
+        # 缩放图片大小
+        # 过时警告 scaled_pixmap = pixmap.scaledint(screen.width() * 0.5, screen.height() * 0.5, Qt.KeepAspectRatio)
+        scaled_pixmap = pixmap.scaled(int(screen.width() * 0.5), int(screen.height() * 0.5), Qt.KeepAspectRatio)
         label.setPixmap(scaled_pixmap)
         self.resize(scaled_pixmap.width(), scaled_pixmap.height())
 
         # 居中显示窗口
+        self.centerWindow()
+
+        QTimer.singleShot(4500, self.close)
+
+    def centerWindow(self):
+        # 居中窗口
         qr = self.frameGeometry()
-        cp = QApplication.desktop().availableGeometry().center()
+        cp = QDesktopWidget().availableGeometry().center() # 获取屏幕中心点
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-        QTimer.singleShot(3000, self.close)
-
-def show():
+def show_image():
     app = QApplication(sys.argv)
-    ex = ImageWindow('b2.png')
+    ex = ImageWindow('picture\\b2txt.png')  # 图片路径
     ex.show()
     sys.exit(app.exec_())
 
-if __name__ == '__main__':
-    show()
 
+show_image()
