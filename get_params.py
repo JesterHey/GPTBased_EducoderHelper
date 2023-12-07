@@ -190,3 +190,5 @@ def get_parameters(url:str,user_name:str,password:str):
     else:
         print('这不是一个实训作业')
         exit()
+
+get_parameters(url,user_name,password)

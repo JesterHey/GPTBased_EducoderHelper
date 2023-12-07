@@ -4,6 +4,7 @@
 import oss2
 import os
 import json
+from oss2.credentials import EnvironmentVariableCredentialsProvider
 # 云端存储的文件名称都是shixun_id.json,并且要保证都是有答案的.
 # 阿里云 OSS 配置
 access_key_id = 'LTAI5t927vdUFZa9NRnWfrL3'
@@ -29,9 +30,21 @@ def upload(name):
         if 'answer' not in j.keys() or j['answer'] == '':
             # 断言查询结果并抛出异常
             assert False,'答案为空，不予上传'
-    bucket.put_object_from_file(name, name)
+    # 再检查文件是否存在，如果不存在，则上传
+    if not is_exist(name):
+        bucket.put_object_from_file(name, name)
 
 def delete(name):
-    bucket.delete_object(name)
+    # 先检查文件是否存在，如果存在，则删除
+    if is_exist(name):
+        bucket.delete_object(name)
 
-delete('18503.json')
+if __name__ == '__main__':
+    # 测试用
+    # print(is_exist('18503.json'))
+    # download('18503.json')
+    # delete('18503.json')
+    for obj in oss2.ObjectIterator(bucket):
+        print(obj.key)
+
+

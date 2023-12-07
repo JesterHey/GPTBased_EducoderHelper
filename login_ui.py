@@ -16,7 +16,7 @@ class MyApp(QWidget):
 
     def initUI(self):
         # 加载背景图片
-        self.background = QPixmap('picture\\b2.png')
+        self.background = QPixmap('/Users/xuxiaolan/PycharmProjects/GPTPowered_EducoderHelper/picture/b2.png')
         # 创建一个垂直布局
         mainLayout = QVBoxLayout()
 

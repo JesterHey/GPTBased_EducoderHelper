@@ -38,7 +38,7 @@ class ImageWindow(QWidget):
 
 def show_image():
     app = QApplication(sys.argv)
-    ex = ImageWindow('picture\\b2txt.png')  # 图片路径
+    ex = ImageWindow('/Users/xuxiaolan/PycharmProjects/GPTPowered_EducoderHelper/picture/b2txt.png')  # 图片路径
     ex.show()
     sys.exit(app.exec_())
 

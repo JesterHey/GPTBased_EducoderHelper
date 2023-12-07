@@ -1,5 +1,7 @@
 import json
-with open('demo.json','r',encoding='utf-8') as f:
+with open('18503.json','r',encoding='utf-8') as f:
     data = json.load(f)
-for i,j in enumerate(data.items()):
-    print(i,j[-1])
+
+for i,j in data.items():
+    print(j['answer'])
+    print('-'*50)

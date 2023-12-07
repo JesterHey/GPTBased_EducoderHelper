@@ -31,8 +31,6 @@ with open(json_name,'r',encoding='utf-8') as f:
 用于构造请求的参数：describe,require,code
 向GPT提问的格式：promot + 参数模板化的问题
 '''
-os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 promot = '现在，我想让你扮演一个Python程序员来解一个问题，我的问题将由三个部分组成，第一部分是问题的描述，第二部分是问题的需求，第三部分是问题的代码，我需要你按照我的模板编写代码。并且你返回的代码应当是带有注释的'
 #构造问题模板
@@ -45,7 +43,8 @@ promot = '现在，我想让你扮演一个Python程序员来解一个问题，�
 
 # 初始化异步客户端
 client = AsyncOpenAI(
-    api_key='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'
+    api_key='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',
+    base_url='https://api.op-enai.com/v1'
 )
 def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
     data = jsonfile
@@ -74,10 +73,10 @@ def get_answer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> dict:
         tasks = [get_answer(cid,value) for cid,value in data.items()]
         answers = await asyncio.gather(*tasks) # 返回一个列表，列表中的每个元素为每个异步任务的返回值
         #由于异步获得的答案顺序不确定，需要处理,先把答案按照关卡id排序
-        answers.sort(key=lambda x:int(x.split('/')[0]))
+        answers = sorted(answers,key=lambda x:int(x.split('/')[0]))
         # 在data的每个value中新增一个键值对，键为answer，值为答案，并作为返回值返回
         for i in range(len(answers)):
-            ansewer_data[list(ansewer_data.keys())[i]]['answer'] = answers[i]
+            ansewer_data[list(ansewer_data.keys())[i]]['answer'].split('/')[-1] = answers[i]
 
         return ansewer_data
 
