@@ -5,6 +5,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt,QTimer
 from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5.QtWidgets import QCheckBox
 import platform
 from solve_path import b2_path, b2txt_path
 import json
@@ -23,14 +24,19 @@ class MyApp(QWidget):
         # 创建一个垂直布局
         mainLayout = QVBoxLayout()
 
+        self.showPasswordCheckbox = QCheckBox("显示密码", self)
+        self.showPasswordCheckbox.stateChanged.connect(self.togglePasswordVisibility)
         # 创建三个文本框并设置占位符
         self.nameEdit = QLineEdit()
         self.pwdEdit = QLineEdit()
         self.urlEdit = QLineEdit()
 
+        self.pwdEdit.setEchoMode(QLineEdit.Password)
         # 创建一个按钮并连接信号
         btn = QPushButton('提交')
         btn.clicked.connect(self.onSubmit)
+
+        mainLayout.addWidget(self.showPasswordCheckbox, 0, Qt.AlignCenter)
 
         # 创建一个用于显示错误信息的标签
         self.errorLabel = QLabel('', self)
@@ -62,6 +68,12 @@ class MyApp(QWidget):
 
         # 应用样式
         self.applyStyles()
+
+    def togglePasswordVisibility(self):
+        if self.showPasswordCheckbox.isChecked():
+            self.pwdEdit.setEchoMode(QLineEdit.Normal)
+        else:
+            self.pwdEdit.setEchoMode(QLineEdit.Password)
 
     def paintEvent(self, event):
         painter = QPainter(self)

@@ -89,12 +89,13 @@ def print_txt(json_path: list): # 传入json文件路径
 
 
 def get_all_txt_file(path):
-    file_list = []
+    file_list = ['0Atip.txt']
     for root, dirs, files in os.walk(path):
         for file in files:
             if file.endswith('.txt') and file[0].isdigit():
                 file_list.append(os.path.join(root, file))
+    file_list.sort(key=lambda x:x.split('.')[0])
     return file_list
 
-
-print_txt(get_all_txt_file(os.getcwd()))
+if __name__ == '__main__':
+    print_txt(get_all_txt_file(os.getcwd()))

@@ -23,12 +23,8 @@ def is_exist(name:str) -> bool:
 
 # 如果文件存在，则下载到本地并命名为shixun_id_answer
 def download(name):
-    # 先检查本地文件是否存在，如果存在，则不下载
-    if os.path.exists(name):
-        return
-    else:
-    # 将云端文件下载到本地并命名为shixun_id_answer.json
-        bucket.get_object_to_file(name, name)
+    # 将云端文件下载到本地并命名为shixun_id.json
+    bucket.get_object_to_file(name, name)
 # 上传函数，用于获得答案后上传到云端，此步骤在获得答案后调用
 # (to do)如果用户将答案认证为正确，则将本地json中的verified参数改为True后再上传并覆盖云端文件
 def upload(name):
@@ -48,9 +44,7 @@ def delete(name):
     if is_exist(name):
         bucket.delete_object(name)
 if __name__ == '__main__':
+    print('测试用')
     # 测试用
     # print(is_exist('18503.json'))
     #download('18503.json')
-    # delete('18503.json')
-
-

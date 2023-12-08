@@ -23,6 +23,8 @@ from lxml import etree
 import time
 import requests
 from cloud import is_exist,download
+global retry
+retry = 0
 #配置参数
 opt = Options()
 opt.add_experimental_option('detach', True)
@@ -95,7 +97,7 @@ def get_parameters(url:str,user_name:str,password:str):
                         if os.path.exists(f'{shixun_id}.json'):
                             print('下载完成')
                             safari.quit()
-                            exit()
+                            return
                         break
                     except Exception as e:
                         print(e)
@@ -105,15 +107,18 @@ def get_parameters(url:str,user_name:str,password:str):
             print('云端文件不存在，正在爬取')
             #获取关卡数
             #点击展开关卡页面
+            time.sleep(3)
             safari.find_element(By.XPATH,'//*[@id="task-left-panel"]/div[1]/a[1]').click()
-            time.sleep(2)
             #关卡数量由 class = "flex-container challenge-title space-between" 的元素数量决定
+            time.sleep(3)
             htmltxt = safari.page_source
             html = etree.HTML(htmltxt)
             task_num = html.xpath('count(//*[@class="flex-container challenge-title space-between"])')
             task_num = int(task_num)
-            #关闭关卡页面
-            safari.find_element(By.XPATH,'//*[@id="task-left-panel"]/div[3]/div[1]').click()
+            print(f'关卡数量为{task_num}')
+            #回到第一关
+            time.sleep(3)
+            safari.find_element(By.XPATH,'//*[@id="task-left-panel"]/div[3]/div[3]/div/div/div/div/div[1]/div[1]/a').click()
             #对于每一关，获取参数
             #每一关的参数由以下元素组成：
             '''
@@ -127,13 +132,6 @@ def get_parameters(url:str,user_name:str,password:str):
             i=1
             try:
                 while i <= task_num:
-                    safari.implicitly_wait(10)
-                    safari.find_element(By.XPATH, '//*[@id="task-left-panel"]/div[1]/a[1]').click()
-                    safari.implicitly_wait(10)
-                    safari.find_element(By.XPATH,f'/html/body/div[1]/div/div/div/div[2]/section[1]/div[3]/div[3]/div/div/div/div/div[{i}]/div[1]/a').click()
-                    time.sleep(3)
-                    #获取课程id -> 根据url中?前面的，最后一个/后面的那部分参数构造请求，同时，似乎还需要用到cookie，User-Agent和Referer参数，这些统一用selenium在登陆后获取并组装成headers
-                    #获取cookie，User-Agent和Referer
                     cur_url=Referer = safari.current_url
                     identity = cur_url.split('/')[-1].split('?')[0]
                     id_url = f'https://data.educoder.net/api/tasks/{identity}.json?'
@@ -150,13 +148,14 @@ def get_parameters(url:str,user_name:str,password:str):
                     except BaseException:
                         print('获取课程id失败')
                     #获取任务描述(如果存在的话)
+                    time.sleep(3)
                     page_source = safari.page_source
                     describe = obj1.findall(page_source)
                     #获取编程要求(如果存在的话)
                     require = obj2.findall(page_source)
-                    #获取编辑器中的代码,由于代码都是class = "view-line"的div,先找到所有class = "view-line"的div，获取其中的所有文本，再把不同行的代码用\n连接起来
-                    code = safari.find_elements(By.CLASS_NAME,'view-line')
-                    code = '\n'.join([i.text for i in code]).lstrip('\n')
+                    #获取编辑器中的代码,采用requests抓取https://data.educoder.net/api/tasks/{identity}/rep_content.json中的content中的content
+                    # 然后然后，这个content是一个base64编码的字符串，需要解码
+                    code = requests.get(f'https://data.educoder.net/api/tasks/{identity}/rep_content.json',headers=headers).json()['content']['content']
                     #把参数存入字典，再转换为json格式
                     task = {
                         'describe':describe[0] if len(describe) != 0 else '',
@@ -168,19 +167,31 @@ def get_parameters(url:str,user_name:str,password:str):
                     #把每一关的参数存入总的字典中
                     total[challenge_id] = task
                     #去往下一关
-                    i += 1
-            except BaseException:
-                print(f'{challenge_id}参数获取参数失败')
-            #判断爬取到的代码是否存在空值，如果存在空值，则重新爬取
-            for value in total.values():
-                if value['code'] == '':
-                    print('检测到代码参数为空值，重新爬取')
-                    safari.close()
-                    # 再次执行本程序
-                    if 'Windows' in platf:
-                        os.system('python get_params.py')
+                    safari.implicitly_wait(10)
+                    if i == 1:
+                        i += 1
+                        safari.find_element(By.XPATH,f'//*[@id="task-right-panel"]/div[4]/div/div[2]/a').click()
+                    elif i<task_num:
+                        i += 1
+                        safari.find_element(By.XPATH,f'//*[@id="task-right-panel"]/div[4]/div/div[2]/a[2]').click()
                     else:
-                        os.system('python3 get_params.py')
+                        i += 1
+            except Exception as e:
+                print(e)
+                print(f'{i}关参数获取参数失败')
+            #判断爬取到的代码是否存在空值或者键的数量是否与关卡数量相等，如果不相等，则说明爬取失败，需要重新爬取
+
+
+            # if len(total) != task_num:
+            #     print('参数爬取失败，正在重新爬取')
+            #     get_parameters(url,user_name,password)
+            # else:
+            #     for i,j in total.items():
+            #         if j['code'] == '':
+            #             print('参数爬取失败，正在重新爬取')
+            #             get_parameters(url,user_name,password)
+
+
             #把参数写入本地json文件中，文件名字与shixun_name相同键为course_id，值为一个列表，列表中每个元素为一个字典，字典中包含每一关的参数
             with open(f'{shixun_id}.json','w',encoding='utf-8') as f:
                 json.dump(total,f,ensure_ascii=False,indent=4)
@@ -189,9 +200,9 @@ def get_parameters(url:str,user_name:str,password:str):
             safari.quit()
     else:
         print('这不是一个实训作业')
-        exit()
+        return
 if __name__ == '__main__':
-    url = 'https://www.educoder.net/tasks/27V4D95N/1191515/vmxpzae734bj?coursesId=27V4D95N'
+    url = 'https://www.educoder.net/tasks/27V4D95N/1191512/lfi2gqtnueb8?coursesId=27V4D95N'
     user_name = 'hnu202311020126'
     password = 'hzy123456'
     get_parameters(url,user_name,password)
