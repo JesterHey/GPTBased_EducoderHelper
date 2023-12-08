@@ -70,6 +70,7 @@ JSS = readJson()
 transToTxt(JSS)
 # 展示txt文件
 # print('哈哈终于要写完了')
+print('答案获取完毕，开始展示')
 print_txt(get_all_txt_file(os.getcwd()))
 # #打印完，删除本地txt和json文件
 for i in JSS:
