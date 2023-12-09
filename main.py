@@ -94,14 +94,19 @@ if ispractice:
     print('答案获取完毕，开始展示')
     print_txt(get_all_txt_file(os.getcwd()))
     if not is_exist(JSS):
+        print('开始上传答案到云端,请勿关闭程序')
         upload(JSS)
+        print('上传完毕')
 else:
     JSS = get_programmingjson(os.getcwd())
     transToTxt_programming(JSS)
     print('答案获取完毕，开始展示')
     print_txt(get_all_txt_file(os.getcwd()))
     if not is_exist(JSS):
-        upload(JSS)
+        print('开始上传答案到云端,请勿关闭程序')
+        for i in JSS:
+            upload(i)
+        print('上传完毕')
 # #打印完，删除本地txt和json文件
 def getalljsons() -> list:
     return [i for i in os.listdir() if i.endswith('.json')]

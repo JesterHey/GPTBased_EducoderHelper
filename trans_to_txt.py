@@ -41,9 +41,11 @@ def transToTxt_programming(jsons:list):
             data = json.load(f1)
             with open(f'{j+1}.txt','w',encoding='utf-8') as f2 :
                 f2.write(data['answer'])
-            
+
+
 if __name__ == '__main__':
     print('测试部分')
     # jsons = get_shixunjson(os.getcwd())
     # transToTxt(jsons)
-    # transToTxt_programming(jsons=jsons)
+    jsons  = get_programmingjson(os.getcwd())
+    transToTxt_programming(jsons=jsons)
