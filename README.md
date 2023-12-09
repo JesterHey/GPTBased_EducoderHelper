@@ -1,4 +1,5 @@
-# GPTPowered_EducoderHelper &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;🌟 这是一款由 GPT 构建的头歌作业助手 🚀
+# GPTPowered_EducoderHelper
+# 🌟 这是一款由 GPT 构建的头歌作业助手 🚀
 >created by JesterHey with 💡
 #### 写在前面
 首先声明，👩‍💻👨‍💻 本项目适用于**非**图像类编程作业。如果你的作业里有**matplotlib**画图的部分，快去看看[突破！头歌matplotlib相关关卡 100% 通过秘籍](https://github.com/JesterHey/img_file/blob/main/educoder.md)。另外，如你所见，作业助手展现的答案来自于生成式预训练模型(GPT)🤖，但因为评分标准千奇百怪，我们**不能保证**答案的完美无瑕，不过可以给你提供超棒的思路和提示！🌈 当然啦，用了 GPT-4 模型的我们，在处理那些简单题目时，准确度还是杠杠的！👌
