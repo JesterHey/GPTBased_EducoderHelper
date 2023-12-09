@@ -32,14 +32,6 @@ def get_programmingjson(file:str) -> list:
         if i.endswith('.json') and i.startswith('pro'):
             jsonfiles.append(i)
     return jsonfiles
-#读取当前目录下的json文件和对应的编程语言
-j_shixun = get_shixunjson(os.getcwd())
-j_programming = get_programmingjson(os.getcwd())
-if j_shixun == []:
-    language = get_programmingjson(os.getcwd())[0].split('.')[0].split('_')[-1]
-else:
-    language = get_shixunjson(os.getcwd())[0].split('.')[0].split('_')[-1]
-
 '''
 与云服务器连接，先判断当前json是否已在云服务器上，如果在，则直接调用，
 节省调用API的时间和资费，否则，调用API，获得答案，并将答案存入云服务器
@@ -81,8 +73,8 @@ def load_api_key() -> str:
 向GPT提问的格式：promot + 参数模板化的问题
 '''
 
-promot1 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题将由三个部分组成，第一部分是问题的描述，第二部分是问题的需求，第三部分是问题的代码，我需要你按照我的模板编写代码，使用的代码语言是{language}。并且你返回的代码应当是带有注释的。再次注意，请返回完整的，格式正确的，可读的代码！'
-promot2 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题会有两个部分组成，第一部分是问题的描述，第二部分是你需要补全或者完善的代码。你需要阅读，理解我的问题描述，然后补全或者完善代码,使用的代码语言是{language}。再次注意，请返回完整的，格式正确的，输入由用户给出的，可读的代码！'
+#promot1 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题将由三个部分组成，第一部分是问题的描述，第二部分是问题的需求，第三部分是问题的代码，我需要你按照我的模板编写代码，使用的代码语言是{language}。并且你返回的代码应当是带有注释的。再次注意，请返回完整的，格式正确的，可读的代码！'
+#promot2 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题会有两个部分组成，第一部分是问题的描述，第二部分是你需要补全或者完善的代码。你需要阅读，理解我的问题描述，然后补全或者完善代码,使用的代码语言是{language}。再次注意，请返回完整的，格式正确的，输入由用户给出的，可读的代码！'
 #构造问题模板
 #遍历字典，获得每一关的参数，构造请求，获得答案
 #使用异步函数提升效率
@@ -102,9 +94,14 @@ def get_shixunanswer_from_api(jsonfile:dict,client:AsyncOpenAI,promot:str) -> di
     client:异步客户端
     promot:问题模板
     '''
+    j_shixun = get_shixunjson(os.getcwd())
+    j_programming = get_programmingjson(os.getcwd())
+    if j_shixun == []:
+        language = get_programmingjson(os.getcwd())[0].split('.')[0].split('_')[-1]
+    else:
+        language = get_shixunjson(os.getcwd())[0].split('.')[0].split('_')[-1]
     data = jsonfile
-    client = client
-    promot = promot
+    promot1 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题将由三个部分组成，第一部分是问题的描述，第二部分是问题的需求，第三部分是问题的代码，我需要你按照我的模板编写代码，使用的代码语言是{language}。并且你返回的代码应当是带有注释的。再次注意，请返回完整的，格式正确的，可读的代码！'
     # 异步函数来获取答案
     async def get_answer(key,value) -> str:
         '''
@@ -153,10 +150,16 @@ def get_programming_answer_from_api(jsonfile:list,client:AsyncOpenAI,promot:str)
     client:异步客户端
     promot:问题模板
     '''
+    j_shixun = get_shixunjson(os.getcwd())
+    j_programming = get_programmingjson(os.getcwd())
+    if j_shixun == []:
+        language = get_programmingjson(os.getcwd())[0].split('.')[0].split('_')[-1]
+    else:
+        language = get_shixunjson(os.getcwd())[0].split('.')[0].split('_')[-1]
     data = jsonfile
+    promot2 = f'现在，我想让你扮演一个资深而经验丰富的程序员来解一个问题，我的问题会有两个部分组成，第一部分是问题的描述，第二部分是你需要补全或者完善的代码。你需要阅读，理解我的问题描述，然后补全或者完善代码,使用的代码语言是{language}。再次注意，请返回完整的，格式正确的，输入由用户给出的，可读的代码！'
     # 异步函数来获取答案
     async def get_answer(value:dict) -> str:
-        value = value
         pro_id = value['id']
         # code 是base64编码的字符串，需要解码
         des,code = value['describe'],base64.b64decode(value['code']).decode('utf-8')

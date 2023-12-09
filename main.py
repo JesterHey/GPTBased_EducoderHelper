@@ -15,7 +15,7 @@ print('处理api相关中...')
 download('apis.json')
 print('处理完成！')
 from get_params import get_parameters,get_parameters_of_programming,is_practice
-from get_answer import get_shixunanswer_from_api,get_programming_answer_from_api,promot1,promot2,client,rewrite_programming_json,rewrite_shixun_json
+from get_answer import get_shixunanswer_from_api,get_programming_answer_from_api,client,rewrite_programming_json,rewrite_shixun_json
 from login_ui import show_login,show_image,MyApp
 from trans_to_txt import transToTxt,transToTxt_programming,get_programmingjson,get_shixunjson
 import json
@@ -26,7 +26,8 @@ finished = False
 # 调用login_ui获得用户输入的用户名、密码和实训网址
 show_image()
 show_login()
-
+promot1 = '实训'
+promot2 = '编程'
 # 检查userinfo.json文件是否存在，存在，则程序继续
 assert os.path.exists('userinfo.json'), 'userinfo.json文件不存在,请检查'
 
