@@ -47,7 +47,7 @@ class MyApp(QWidget):
         # 对于每个输入框，创建一个水平布局以保持居中
         for label_text, edit_widget in [("用户名", self.nameEdit), 
                                         ("密   码", self.pwdEdit), 
-                                        ("实训网址", self.urlEdit)]:
+                                        ("作业网址", self.urlEdit)]:
             hbox = QHBoxLayout()
             hbox.addStretch()
             vbox_inner = QVBoxLayout()
