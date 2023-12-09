@@ -48,3 +48,5 @@ if __name__ == '__main__':
     # 测试用
     # print(is_exist('18503.json'))
     #download('18503.json')
+    #检查云端所有文件
+    print([i for i in bucket.list_objects()])

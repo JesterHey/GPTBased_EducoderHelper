@@ -14,10 +14,10 @@ from cloud import upload,download,is_exist
 print('处理api相关中...')
 download('apis.json')
 print('处理完成！')
-from get_params import get_parameters
-from get_answer import get_answer_from_api,promot,client,get_json,load_api_key,load_json_data
+from get_params import get_parameters,get_parameters_of_programming,is_practice
+from get_answer import get_shixunanswer_from_api,get_programming_answer_from_api,promot1,promot2,client,rewrite_programming_json,rewrite_shixun_json
 from login_ui import show_login,show_image,MyApp
-from trans_to_txt import transToTxt,readJson
+from trans_to_txt import transToTxt,transToTxt_programming,get_programmingjson,get_shixunjson
 import json
 import os
 from printtxt import print_txt,get_all_txt_file
@@ -36,49 +36,78 @@ with open('userinfo.json', 'r') as f:
 user_name = userinfo['name']
 password = userinfo['pwd']
 url = userinfo['url']
-
-# 调用get_params.py获得参数，完成后本地应该有一个json文件，里面有参数
-get_parameters(url,user_name,password)
-print('到这一步，参数获取完成！')
+ispractice = is_practice(url=url)
+if ispractice:
+    # 调用get_params.py获得参数，完成后本地应该有一个json文件，里面有参数
+    get_parameters(url,user_name,password)
+else:
+    get_parameters_of_programming(url=url,user_name=user_name,password=password)
+print('参数获取完成！')
 # 获得刚才get_params.py生成的json文件名
-j_name = readJson()[0]
-# 判断j_name文件中是否有answer
-with open(j_name,'r',encoding='utf-8') as f:
-    json_data = json.load(f)
-
 def is_exist_answer(data:dict) -> bool:
     for i,j in data.items():
         if 'answer' in j.keys():
             return True
     return False
-print('到这一步，判断是否存在答案')
-if is_exist_answer(json_data):
-    pass
+def is_exist_answer_programming(data:dict) -> bool:
+    for i in data.keys():
+        if i == 'answer':
+            continue
+        else:
+            return False
+    return True
+if ispractice:
+    j_name = get_shixunjson(os.getcwd())[0]
+    # 判断j_name文件中是否有answer
+    with open(j_name,'r',encoding='utf-8') as f:
+        json_data = json.load(f)
+    if is_exist_answer(json_data):
+        pass
+    else:
+        print('调用api获取答案中，请耐心等待...')
+        new_data = get_shixunanswer_from_api(jsonfile=json_data,client=client,promot=promot1)
+        # 重写本地json文件
+        rewrite_shixun_json(json_name=j_name,new_data=new_data)
 else:
-    print('到这一步,调用api获取答案')
-    new_data = get_answer_from_api(jsonfile=json_data,client=client,promot=promot)
-    # 重写本地json文件
-    with open(j_name,'w',encoding='utf-8') as f:
-        json.dump(new_data,f,ensure_ascii=False,indent=4)
+    j_names = get_programmingjson(os.getcwd())
+    # 判断是否有answer
+    for j in j_names:
+        with open(j,'r',encoding='utf-8') as f1:
+            j_data = json.load(f1)
+        if not is_exist_answer_programming(j_data):
+            break
+    print('调用api获取答案中，请耐心等待...')
+    new_data = get_programming_answer_from_api(jsonfile=j_names,client=client,promot=promot2)
+    # 重写本地接送文件
+    rewrite_programming_json(json_names=j_names,new_data=new_data)
 
 # 上面的判断执行完后，本地的json文件中已经有answer了，下面实现信息展示
 # 先删除本地api.json文件
 os.remove('apis.json')
-# 使用readJson函数读取当前目录下的所有json文件
-JSS = readJson() 
-# 构建txt文件
-transToTxt(JSS)
-# 展示txt文件
-# print('哈哈终于要写完了')
-print('答案获取完毕，开始展示')
-print_txt(get_all_txt_file(os.getcwd()))
+# 函数读取当前目录下的所有json文件
+if ispractice:
+    JSS = get_shixunjson(os.getcwd())[0]
+    # 构建txt文件
+    transToTxt(JSS)
+    # 展示txt文件
+    # 判断云端是否存在答案json，如果不存在，则上传
+    print('答案获取完毕，开始展示')
+    print_txt(get_all_txt_file(os.getcwd()))
+    if not is_exist(JSS):
+        upload(JSS)
+else:
+    JSS = get_programmingjson(os.getcwd())
+    transToTxt_programming(JSS)
+    print('答案获取完毕，开始展示')
+    print_txt(get_all_txt_file(os.getcwd()))
+    if not is_exist(JSS):
+        upload(JSS)
 # #打印完，删除本地txt和json文件
-for i in JSS:
+def getalljsons() -> list:
+    return [i for i in os.listdir() if i.endswith('.json')]
+for i in getalljsons():
     os.remove(i)
-# 删除本地所有数字开头的txt文件
+# 删除本地所有数字命名的txt文件
 for i in os.listdir():
-    if i.split('.')[0].isdigit() and i.endswith('.txt'):
+    if i.split('.')[0].isdigit() or i.startswith('pro') and i.endswith('.txt'):
         os.remove(i)
-# 判断云端是否存在答案json，如果不存在，则上传
-if not is_exist(j_name):
-    upload(j_name)

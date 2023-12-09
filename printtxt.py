@@ -89,7 +89,7 @@ def print_txt(json_path: list): # 传入json文件路径
 
 
 def get_all_txt_file(path):
-    file_list = ['0Atip.txt']
+    file_list = []
     for root, dirs, files in os.walk(path):
         for file in files:
             if file.endswith('.txt') and file[0].isdigit():
