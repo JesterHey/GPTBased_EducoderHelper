@@ -65,7 +65,7 @@ def load_json_data(json_name:str) -> dict:
     return data
 def load_api_key() -> str:
     with open('apis.json','r',encoding='utf-8') as f: # apis.json为存储api_key的json文件名
-        return json.load(f)['openaiapi']
+        return json.load(f)['my_api']
 
 #遍历字典，获得每一关的参数，构造请求，获得答案
 '''
@@ -204,10 +204,8 @@ def get_programming_answer_from_api(jsonfile:list,client:AsyncOpenAI,promot:str)
 
 
 if __name__ == '__main__':
-    ans = get_programming_answer_from_api(jsonfile=get_programmingjson(
-        os.getcwd()),
-                                          client=client,
-                                          promot=promot2)
+    promot=''
+    ans = get_programming_answer_from_api(jsonfile=get_programmingjson(os.getcwd()),client=client,promot=promot)
     print(ans)
     rewrite_programming_json(json_names=get_programmingjson(os.getcwd()),
                              new_data=ans)

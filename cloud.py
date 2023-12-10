@@ -38,8 +38,3 @@ def delete(name):
         bucket.delete_object(name)
 if __name__ == '__main__':
     print('测试用')
-    # 测试用
-    # print(is_exist('18503.json'))
-    #download('18503.json')
-    #检查云端所有文件
-    upload('pro_233226_Python.json')
