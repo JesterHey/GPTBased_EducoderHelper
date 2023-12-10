@@ -33,7 +33,7 @@ https://github.com/JesterHey/GPTPowered_EducoderHelper/assets/144512889/9311545f
  下载完毕后，继续输入这个指令：  
  ```pip install -r requirements.txt```
 
- 2. 如果你不太用 Git，那么请下载本项目的压缩包并解压，然后一定要**进入项目的根目录**，就是所有源文件们的那里。确定好了，就在文件夹的空白处右键选择**在终端中打开**，然后输入这个指令：  
+ 2. 如果你不太用 Git，那么请下载本项目的压缩包并解压，然后一定要**进入项目的根目录**，就是所有源文件所在的那里。确定好了，就在文件夹的空白处右键选择**在终端中打开**，然后输入这个指令：  
   ```pip install -r requirements.txt```
 >Mac 或 Linux 用户可能需要这样输入：```pip3 install -r requirements.txt```
 
