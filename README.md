@@ -16,6 +16,7 @@ https://github.com/JesterHey/GPTPowered_EducoderHelper/assets/144512889/9311545f
  1. 谷歌浏览器（Google Chrome）🌐
  2. 装好的谷歌浏览器驱动（ChromeDriver）
  3. Python 版本 3.9 或以上 🐍
+>一定要在终端```python --version```检查一下
 
 如果你还没装谷歌浏览器，快去 [下载一个](https://www.google.com/intl/zh-CN/chrome/) ！
 还没下好谷歌浏览器驱动？那就赶紧去 [搞定它](https://googlechromelabs.github.io/chrome-for-testing/) ！
