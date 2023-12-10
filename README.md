@@ -21,7 +21,7 @@ https://github.com/JesterHey/GPTPowered_EducoderHelper/assets/144512889/9311545f
 还没下好谷歌浏览器驱动？那就赶紧去 [搞定它](https://googlechromelabs.github.io/chrome-for-testing/) ！
 >⚠️注意啦，一定要确保谷歌浏览器和驱动的版本要匹配，否则可能会有意想不到的小插曲哦！
 
-弄好这些之后，就该配置驱动啦！不知道怎么弄的同学可以去 [看看这个](https://www.cnblogs.com/lfri/p/10542797.html)。
+弄好这些之后，就该配置驱动啦！不知道怎么弄的同学可以去 [看看这个](https://zhuanlan.zhihu.com/p/373688337)。
 
 ## 使用方法
 ### 1.下载仓库
