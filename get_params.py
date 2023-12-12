@@ -314,11 +314,19 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
             # 获取id后，判断云端是否存在该文件，如果存在，则跳过，如果不存在，则继续执行本程序
             exist = is_exist(f'pro_{pro_id}_{language}.json')
             if exist:
-                print('云端文件已存在，正在下载')
-                download(f'pro_{pro_id}_{language}.json')
-                print(f'pro_{pro_id}_{language}.json下载完成')
-                i += 1
-                continue
+                try
+                    print('云端文件已存在，正在下载')
+                    download(f'pro_{pro_id}_{language}.json')
+                    print(f'pro_{pro_id}_{language}.json下载完成')
+                    i += 1
+                    # 去往下一关
+                    safari.implicitly_wait(10)
+                    safari.find_element(By.ID,'oj-next').click()
+                    time.sleep(2)
+                    continue
+                except Exception as e:
+                    print(e)
+                    print('参数爬取完成')
             else:
                 print('云端文件不存在，正在爬取')
                 # 题干
@@ -350,8 +358,8 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
         print('不是编程作业')
 
 if __name__ == '__main__':
-    url = 'https://www.educoder.net/tasks/27V4D95N/1363622/bkxl9wqvfjos?coursesId=27V4D95N'
+    url = 'https://www.educoder.net/myproblems/9kwnlzvcegsa?type=1'
     user_name = 'hnu202311020126'
     password = 'hzy123456'
-    get_parameters(url,user_name,password)
+    get_parameters_of_programming(url=url,user_name=user_name,password=password)
     print('结束测试')
