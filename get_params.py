@@ -317,6 +317,7 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
                 print('云端文件已存在，正在下载')
                 download(f'pro_{pro_id}_{language}.json')
                 print(f'pro_{pro_id}_{language}.json下载完成')
+                i += 1
                 continue
             else:
                 print('云端文件不存在，正在爬取')
