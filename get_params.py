@@ -358,8 +358,6 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
         print('不是编程作业')
 
 if __name__ == '__main__':
-    url = 'https://www.educoder.net/myproblems/9kwnlzvcegsa?type=1'
-    user_name = 'hnu202311020126'
-    password = 'hzy123456'
+    url,user_name,password='','',''
     get_parameters_of_programming(url=url,user_name=user_name,password=password)
     print('结束测试')
