@@ -32,6 +32,7 @@ def get_programmingjson(file:str) -> list:
         if i.endswith('.json') and i.startswith('pro'):
             jsonfiles.append(i)
     return jsonfiles
+
 '''
 与云服务器连接，先判断当前json是否已在云服务器上，如果在，则直接调用，
 节省调用API的时间和资费，否则，调用API，获得答案，并将答案存入云服务器
@@ -205,7 +206,6 @@ def get_programming_answer_from_api(jsonfile:list,client:AsyncOpenAI,promot:str)
 
 if __name__ == '__main__':
     promot=''
-    ans = get_shixunanswer_from_api(load_json_data(get_shixunjson(os.getcwd())[0]),client=client,promot=promot)
+    ans = get_programming_answer_from_api(jsonfile=get_programmingjson(os.getcwd()),client=client,promot=promot)
     print(ans)
-    rewrite_shixun_json(get_shixunjson(os.getcwd())[0],ans)
-    #new_data = get_programming_answer_from_api(get_programmingjson(os.getcwd()),client=client,promot=promot2)
+    rewrite_programming_json(json_names=get_programmingjson(os.getcwd()),new_data=ans)

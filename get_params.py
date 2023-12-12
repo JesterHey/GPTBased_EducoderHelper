@@ -25,7 +25,7 @@ from cloud import is_exist,download
 #配置参数
 opt = Options()
 opt.add_experimental_option('detach', True)
-#opt.add_argument('--headless')
+opt.add_argument('--headless')
 platf = platform.platform()
 def is_practice(url:str) -> bool:
     obj=re.compile(r'www.educoder.net/tasks')
@@ -103,17 +103,13 @@ def get_parameters(url: str, user_name: str, password: str,retry:int=2):
             if exist:
                 try:
                     print('云端文件已存在，正在下载')
-                    download(f'{shixun_id}.json')
+                    download(f'{shixun_id}_{language}.json')
                     # 检测本地文件是否下载完成
-                    while True:
-                        try:
-                            if os.path.exists(f'{shixun_id}_{language}.json'):
-                                print('下载完成')
-                                safari.quit()
-                                return
-                            break
-                        except Exception as e:
-                            print(e)
+                    if os.path.exists(f'{shixun_id}_{language}.json'):
+                        print(f'{shixun_id}.json下载完成')
+                        # 关闭浏览器
+                        safari.quit()
+                        return
                 except Exception as e:
                     print(e)
             else:  #不存在，则继续执行本程序
@@ -130,6 +126,7 @@ def get_parameters(url: str, user_name: str, password: str,retry:int=2):
                 #获取关卡数量
                 print(resp2.json())
                 task_num = len(resp2.json())
+                print(f'关卡数量为{task_num}')
                 resp2.close()
                 #回到第一关
                 time.sleep(2)
@@ -194,11 +191,8 @@ def get_parameters(url: str, user_name: str, password: str,retry:int=2):
                             'language':
                             language if language != None else ''
                         }
-                        print(f'第{i}关的参数为{task}')
                         #把每一关的参数存入总的字典中
                         total[challenge_id] = task
-                        print('当前参数为')
-                        print(total)
                         #去往下一关
                         safari.implicitly_wait(10)
                         if i <= 1:

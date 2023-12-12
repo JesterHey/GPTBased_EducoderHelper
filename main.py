@@ -1,3 +1,4 @@
+
 '''
 主程序：整合各个模块
 1、ui文件调用相应ui模块
@@ -5,6 +6,7 @@
 3、get_answer.py获取答案
 4、cloud.py将json文件存入云端
 '''
+
 # 生成图形化界面，引导用户登陆并输入实训网址
 # 调用get_params.py获取参数，这一步同时隐含了云端获取答案的过程
 # 如果云端答案不存在，则调用get_answer.py获取答案，并展示给用户
@@ -85,16 +87,15 @@ else:
 os.remove('apis.json')
 # 函数读取当前目录下的所有json文件
 if ispractice:
-    JSS = get_shixunjson(os.getcwd())[0]
+    JSS = get_shixunjson(os.getcwd())
     # 构建txt文件
     transToTxt(JSS)
     # 展示txt文件
-    # 判断云端是否存在答案json，如果不存在，则上传
     print('答案获取完毕，开始展示')
     print_txt(get_all_txt_file(os.getcwd()))
-    if not is_exist(JSS):
+    if not is_exist(JSS[0]):
         print('开始上传答案到云端,请勿关闭程序')
-        upload(JSS)
+        upload(JSS[0])
         print('上传完毕')
 else:
     JSS = get_programmingjson(os.getcwd())

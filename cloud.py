@@ -37,4 +37,4 @@ def delete(name):
     if is_exist(name):
         bucket.delete_object(name)
 if __name__ == '__main__':
-    print('测试用')
+    print('测试部分')
