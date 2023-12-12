@@ -50,7 +50,7 @@ class TypewriterEffectApp(QWidget):
         self.index = 0
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.displayNextCharacter)
-        self.timer.start(20)
+        self.timer.start(5)
 
     def displayNextCharacter(self):
         if self.index < len(self.content):

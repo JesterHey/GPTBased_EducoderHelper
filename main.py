@@ -21,8 +21,6 @@ from trans_to_txt import transToTxt,transToTxt_programming,get_programmingjson,g
 import json
 import os
 from printtxt import print_txt,get_all_txt_file
-global finished
-finished = False
 # 调用login_ui获得用户输入的用户名、密码和实训网址
 show_image()
 show_login()
@@ -40,7 +38,7 @@ url = userinfo['url']
 ispractice = is_practice(url=url)
 if ispractice:
     # 调用get_params.py获得参数，完成后本地应该有一个json文件，里面有参数
-    get_parameters(url,user_name,password)
+    get_parameters(url=url,user_name=user_name,password=password)
 else:
     get_parameters_of_programming(url=url,user_name=user_name,password=password)
 print('参数获取完成！')

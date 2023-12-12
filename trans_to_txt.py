@@ -47,5 +47,6 @@ if __name__ == '__main__':
     print('测试部分')
     # jsons = get_shixunjson(os.getcwd())
     # transToTxt(jsons)
-    jsons  = get_programmingjson(os.getcwd())
-    transToTxt_programming(jsons=jsons)
+    jsons  = get_shixunjson(os.getcwd())
+    print(jsons)
+    transToTxt(jsons)
