@@ -53,10 +53,10 @@ def is_exist_answer(data:dict) -> bool:
 def is_exist_answer_programming(data:dict) -> bool:
     for i in data.keys():
         if i == 'answer':
-            continue
+            return True
         else:
-            return False
-    return True
+            continue
+    return False
 if ispractice:
     j_name = get_shixunjson(os.getcwd())[0]
     # 判断j_name文件中是否有answer
@@ -76,11 +76,12 @@ else:
         with open(j,'r',encoding='utf-8') as f1:
             j_data = json.load(f1)
         if not is_exist_answer_programming(j_data):
+            print('调用api获取答案中，请耐心等待...')
+            new_data = get_programming_answer_from_api(jsonfile=j_names,client=client,promot=promot2)
+            # 重写本地接送文件
+            rewrite_programming_json(json_names=j_names,new_data=new_data)
+        else:
             break
-    print('调用api获取答案中，请耐心等待...')
-    new_data = get_programming_answer_from_api(jsonfile=j_names,client=client,promot=promot2)
-    # 重写本地接送文件
-    rewrite_programming_json(json_names=j_names,new_data=new_data)
 
 # 上面的判断执行完后，本地的json文件中已经有answer了，下面实现信息展示
 # 先删除本地api.json文件

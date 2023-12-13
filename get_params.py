@@ -25,7 +25,7 @@ from cloud import is_exist,download
 #配置参数
 opt = Options()
 opt.add_experimental_option('detach', True)
-opt.add_argument('--headless')
+#opt.add_argument('--headless')
 platf = platform.platform()
 def is_practice(url:str) -> bool:
     obj=re.compile(r'www.educoder.net/tasks')
@@ -111,7 +111,7 @@ def get_parameters(url: str, user_name: str, password: str,retry:int=2):
                         safari.quit()
                         return
                 except Exception as e:
-                    print(e)
+                    print()
             else:  #不存在，则继续执行本程序
                 print('云端文件不存在，正在爬取')
                 #获取关卡数
@@ -314,7 +314,7 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
             # 获取id后，判断云端是否存在该文件，如果存在，则跳过，如果不存在，则继续执行本程序
             exist = is_exist(f'pro_{pro_id}_{language}.json')
             if exist:
-                try
+                try:
                     print('云端文件已存在，正在下载')
                     download(f'pro_{pro_id}_{language}.json')
                     print(f'pro_{pro_id}_{language}.json下载完成')
@@ -325,8 +325,8 @@ def get_parameters_of_programming(url:str,user_name:str,password:str):
                     time.sleep(2)
                     continue
                 except Exception as e:
-                    print(e)
                     print('参数爬取完成')
+                    safari.quit()
             else:
                 print('云端文件不存在，正在爬取')
                 # 题干
